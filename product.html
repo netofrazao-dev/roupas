@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Produto — Élève</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .zoom-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 2000;
+      display: none; align-items: center; justify-content: center; cursor: zoom-out;
+    }
+    .zoom-modal.open { display: flex; }
+    .zoom-modal img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+    .zoom-close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      color: white; font-size: 2rem; cursor: pointer; background: none; border: none; line-height: 1;
+    }
+    .related-section { background: var(--gray-100); padding: 60px 0; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">Él<span>è</span>ve</a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="catalog.html">Catálogo</a>
+      <a href="catalog.html?category=Vestidos">Vestidos</a>
+      <a href="catalog.html?category=Blusas">Blusas</a>
+      <a href="catalog.html?promo=1">Promoções</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="nav-search-wrap">
+        <input class="nav-search-input" type="text" placeholder="Buscar...">
+        <button class="nav-btn nav-search-btn" aria-label="Pesquisar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="catalog.html">Catálogo</a>
+    <a href="catalog.html?promo=1">Promoções</a>
+  </nav>
+</header>
+
+<!-- PRODUCT PAGE -->
+<main class="product-page">
+  <div class="container">
+
+    <!-- Loading state -->
+    <div id="product-loading">
+      <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:5rem;">
+        <div>
+          <div class="skeleton" style="aspect-ratio:3/4;margin-bottom:1rem;"></div>
+          <div style="display:flex;gap:.75rem;">
+            <div class="skeleton" style="width:80px;aspect-ratio:3/4;"></div>
+            <div class="skeleton" style="width:80px;aspect-ratio:3/4;"></div>
+            <div class="skeleton" style="width:80px;aspect-ratio:3/4;"></div>
+          </div>
+        </div>
+        <div style="padding-top:2rem;">
+          <div class="skeleton skeleton-text" style="width:40%;height:14px;margin-bottom:1rem;"></div>
+          <div class="skeleton skeleton-text" style="width:80%;height:40px;margin-bottom:1rem;"></div>
+          <div class="skeleton skeleton-text" style="width:30%;height:30px;margin-bottom:2rem;"></div>
+          <div class="skeleton skeleton-text" style="width:60%;height:14px;margin-bottom:1rem;"></div>
+          <div class="skeleton skeleton-text" style="width:100%;height:14px;margin-bottom:.5rem;"></div>
+          <div class="skeleton skeleton-text" style="width:90%;height:14px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product content -->
+    <div id="product-content" style="display:none;" class="product-layout">
+
+      <!-- GALLERY -->
+      <div class="product-gallery" id="product-gallery">
+        <div class="gallery-main" id="gallery-main">
+          <img id="gallery-main-img" src="" alt="">
+        </div>
+        <div class="gallery-thumbs" id="gallery-thumbs"></div>
+      </div>
+
+      <!-- INFO -->
+      <div class="product-info">
+        <div class="product-breadcrumb">
+          <a href="index.html">Home</a>
+          <span>›</span>
+          <a href="catalog.html">Catálogo</a>
+          <span>›</span>
+          <span id="product-category-bc"></span>
+        </div>
+
+        <p class="label product-category-tag" id="product-category"></p>
+        <h1 class="product-name" id="product-name"></h1>
+
+        <div class="product-pricing" id="product-pricing"></div>
+
+        <div class="product-stock" id="product-stock"></div>
+
+        <div class="product-divider"></div>
+
+        <!-- SIZE SELECTOR -->
+        <div id="size-section" style="display:none;">
+          <div class="size-label">
+            <span>Selecione o tamanho</span>
+            <span class="size-guide" onclick="showToast('Para dúvidas sobre tamanhos, entre em contato pelo WhatsApp.', 'info')">Guia de tamanhos</span>
+          </div>
+          <div class="sizes-grid" id="sizes-grid"></div>
+          <div class="product-divider"></div>
+        </div>
+
+        <!-- QTY -->
+        <div class="quantity-selector">
+          <span class="qty-label">Quantidade</span>
+          <div class="qty-controls">
+            <button class="qty-btn" id="qty-minus">−</button>
+            <span class="qty-value" id="qty-value">1</span>
+            <button class="qty-btn" id="qty-plus">+</button>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="product-cta">
+          <button class="btn btn-whatsapp btn-full" id="btn-buy">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            Comprar pelo WhatsApp
+          </button>
+          <a href="catalog.html" class="btn btn-outline btn-full">← Continuar comprando</a>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="product-description" id="product-description" style="display:none;">
+          <h4>Sobre o produto</h4>
+          <p id="product-desc-text"></p>
+        </div>
+
+        <!-- FEATURES -->
+        <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:.6rem;">
+          <div style="display:flex;gap:.6rem;align-items:center;font-size:.85rem;color:var(--gray-600);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Frete grátis acima de R$ 299
+          </div>
+          <div style="display:flex;gap:.6rem;align-items:center;font-size:.85rem;color:var(--gray-600);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Entrega para todo o Brasil
+          </div>
+          <div style="display:flex;gap:.6rem;align-items:center;font-size:.85rem;color:var(--gray-600);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Qualidade garantida
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <div id="product-error" style="display:none;" class="empty-state">
+      <div class="empty-state-icon">😕</div>
+      <h3>Produto não encontrado</h3>
+      <p>Este produto pode não estar mais disponível.</p>
+      <a href="catalog.html" class="btn btn-primary" style="margin-top:1.5rem;">Ver catálogo</a>
+    </div>
+
+  </div>
+</main>
+
+<!-- RELATED -->
+<section class="related-section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <p class="label section-label">Você também pode gostar</p>
+        <h2 class="section-title">Produtos relacionados</h2>
+      </div>
+      <a href="catalog.html" class="btn btn-outline btn-sm">Ver todos</a>
+    </div>
+    <div class="products-grid" id="related-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text w-80"></div><div class="skeleton skeleton-text w-40"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text w-80"></div><div class="skeleton skeleton-text w-40"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text w-80"></div><div class="skeleton skeleton-text w-40"></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text w-80"></div><div class="skeleton skeleton-text w-40"></div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">Él<span>è</span>ve</div>
+        <p class="footer-desc">Moda feminina premium com qualidade e elegância.</p>
+      </div>
+      <div><h4 class="footer-col-title">Links</h4>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="catalog.html">Catálogo</a>
+          <a href="catalog.html?promo=1">Promoções</a>
+        </div>
+      </div>
+      <div><h4 class="footer-col-title">Categorias</h4>
+        <div class="footer-links">
+          <a href="catalog.html?category=Vestidos">Vestidos</a>
+          <a href="catalog.html?category=Blusas">Blusas</a>
+          <a href="catalog.html?category=Calças">Calças</a>
+        </div>
+      </div>
+      <div><h4 class="footer-col-title">Contato</h4>
+        <div class="footer-links">
+          <a href="#" id="footer-wa">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 Élève.</span></div>
+  </div>
+</footer>
+
+<!-- ZOOM MODAL -->
+<div class="zoom-modal" id="zoom-modal">
+  <button class="zoom-close" onclick="closeZoom()">×</button>
+  <img id="zoom-img" src="" alt="Zoom">
+</div>
+
+<a class="float-whatsapp" id="float-wa" href="#" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+</a>
+
+<script src="config.js"></script>
+<script src="product.js"></script>
+</body>
+</html>

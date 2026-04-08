@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Élève</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body">
+
+<!-- LOGIN PAGE -->
+<div id="login-page" class="login-page">
+  <div class="login-card">
+    <div class="login-logo">Él<span>è</span>ve <small style="font-size:.8rem;color:var(--gray-400);font-family:var(--font-body);font-weight:400;">Admin</small></div>
+    <p class="login-subtitle">Acesse o painel de gerenciamento</p>
+    <div class="login-form">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="admin@eleve.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-full" id="login-btn">Entrar</button>
+      <p id="login-error" style="font-size:.85rem;color:var(--danger);text-align:center;display:none;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-brand">Él<span>è</span>ve</div>
+    <nav class="admin-nav">
+      <div class="admin-nav-item active" data-panel="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="admin-nav-label">Dashboard</span>
+      </div>
+      <div class="admin-nav-item" data-panel="products">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="admin-nav-label">Produtos</span>
+      </div>
+      <div class="admin-nav-item" data-panel="add-product">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <span class="admin-nav-label">Novo Produto</span>
+      </div>
+      <div class="admin-nav-item" onclick="window.open('index.html','_blank')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span class="admin-nav-label">Ver Loja</span>
+      </div>
+    </nav>
+    <div class="admin-signout" id="signout-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sair
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <!-- TOPBAR -->
+    <div class="admin-topbar">
+      <h1 id="admin-section-title">Dashboard</h1>
+      <div class="admin-user">
+        <span id="admin-user-email" style="color:var(--gray-600);"></span>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PANEL -->
+    <div id="panel-dashboard">
+      <div class="admin-cards" id="dashboard-cards">
+        <div class="admin-card"><div class="admin-card-label">Total Produtos</div><div class="admin-card-value" id="stat-total">—</div></div>
+        <div class="admin-card"><div class="admin-card-label">Em Promoção</div><div class="admin-card-value" id="stat-promo">—</div></div>
+        <div class="admin-card"><div class="admin-card-label">Esgotados</div><div class="admin-card-value" id="stat-stock">—</div></div>
+        <div class="admin-card"><div class="admin-card-label">Categorias</div><div class="admin-card-value" id="stat-cats">—</div></div>
+      </div>
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2>Produtos Recentes</h2>
+          <button class="btn btn-primary btn-sm" onclick="showPanel('products')">Ver todos</button>
+        </div>
+        <div class="admin-panel-body" style="padding:0;">
+          <div id="recent-products-table" style="overflow-x:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS PANEL -->
+    <div id="panel-products" style="display:none;">
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2>Produtos <span id="products-badge" style="font-size:.8rem;background:var(--gray-100);padding:.2rem .6rem;border-radius:20px;margin-left:.5rem;"></span></h2>
+          <div style="display:flex;gap:.75rem;align-items:center;">
+            <input type="text" class="form-input" id="admin-search" placeholder="Buscar produto..." style="width:220px;padding:.5rem .85rem;">
+            <button class="btn btn-primary btn-sm" onclick="showPanel('add-product')">+ Novo</button>
+          </div>
+        </div>
+        <div class="admin-panel-body" style="padding:0;">
+          <div id="products-table" style="overflow-x:auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD/EDIT PRODUCT PANEL -->
+    <div id="panel-add-product" style="display:none;">
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2 id="form-title">Novo Produto</h2>
+          <button class="btn btn-outline btn-sm" onclick="cancelEdit()">← Voltar</button>
+        </div>
+        <div class="admin-panel-body">
+          <form id="product-form" onsubmit="return false;">
+            <input type="hidden" id="edit-id">
+            <div class="form-grid">
+              <!-- Name -->
+              <div class="form-group form-grid-full">
+                <label class="form-label">Nome do produto *</label>
+                <input class="form-input" type="text" id="f-name" placeholder="Ex: Vestido Midi Floral" required>
+              </div>
+              <!-- Category -->
+              <div class="form-group">
+                <label class="form-label">Categoria *</label>
+                <select class="form-input form-select" id="f-category" required>
+                  <option value="">Selecione...</option>
+                  <option>Vestidos</option>
+                  <option>Blusas</option>
+                  <option>Calças</option>
+                  <option>Saias</option>
+                  <option>Acessórios</option>
+                  <option>Casacos</option>
+                  <option>Shorts</option>
+                </select>
+              </div>
+              <!-- Stock -->
+              <div class="form-group">
+                <label class="form-label">Estoque *</label>
+                <input class="form-input" type="number" id="f-stock" placeholder="0" min="0" required>
+              </div>
+              <!-- Price -->
+              <div class="form-group">
+                <label class="form-label">Preço (R$) *</label>
+                <input class="form-input" type="number" id="f-price" placeholder="0.00" step="0.01" min="0" required>
+              </div>
+              <!-- Promo Price -->
+              <div class="form-group">
+                <label class="form-label">Preço promocional (R$)</label>
+                <input class="form-input" type="number" id="f-promo" placeholder="Deixe vazio se não houver" step="0.01" min="0">
+                <span class="form-hint">Preencha apenas se tiver promoção ativa</span>
+              </div>
+              <!-- Image URL -->
+              <div class="form-group form-grid-full">
+                <label class="form-label">URL da imagem principal *</label>
+                <input class="form-input" type="url" id="f-image" placeholder="https://..." required>
+                <span class="form-hint">Use Supabase Storage ou qualquer URL pública de imagem</span>
+              </div>
+              <!-- Image Preview -->
+              <div class="form-group form-grid-full" id="img-preview-wrap" style="display:none;">
+                <label class="form-label">Preview</label>
+                <img id="img-preview" src="" alt="Preview" style="width:120px;height:160px;object-fit:cover;border-radius:4px;border:1px solid var(--gray-200);">
+              </div>
+              <!-- Sizes -->
+              <div class="form-group form-grid-full">
+                <label class="form-label">Tamanhos disponíveis</label>
+                <div class="sizes-checkboxes" id="sizes-checkboxes">
+                  <label class="size-checkbox-label"><input type="checkbox" value="PP"><span>PP</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="P"><span>P</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="M"><span>M</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="G"><span>G</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="GG"><span>GG</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="XG"><span>XG</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="34"><span>34</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="36"><span>36</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="38"><span>38</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="40"><span>40</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="42"><span>42</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="44"><span>44</span></label>
+                  <label class="size-checkbox-label"><input type="checkbox" value="Único"><span>Único</span></label>
+                </div>
+              </div>
+              <!-- Description -->
+              <div class="form-group form-grid-full">
+                <label class="form-label">Descrição</label>
+                <textarea class="form-input form-textarea" id="f-desc" placeholder="Descreva o produto, materiais, como usar..."></textarea>
+              </div>
+            </div>
+            <div style="display:flex;gap:1rem;margin-top:2rem;justify-content:flex-end;">
+              <button type="button" class="btn btn-outline" onclick="cancelEdit()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="save-btn" onclick="saveProduct()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Salvar Produto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <h3>Confirmar exclusão</h3>
+      <button class="modal-close" onclick="closeDeleteModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>Tem certeza que deseja excluir <strong id="delete-product-name"></strong>? Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-delete-btn" style="background:var(--danger);border-color:var(--danger);">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
