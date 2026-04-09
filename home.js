@@ -38,7 +38,7 @@ async function loadNew() {
   try {
     const products = await API.getProducts({ limit: 4, offset: 4 });
     if (!products?.length) {
-      grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✨</div><h3>Novidades em breve</h3></div>`;
+      grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👕</div><h3>Novidades em breve</h3></div>`;
       return;
     }
     grid.innerHTML = products.map(renderProductCard).join('');
